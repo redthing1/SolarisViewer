@@ -2,6 +2,10 @@
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarisViewer", "SolarisViewer.csproj", "{D4C31C6E-7110-4187-8A7E-BB8CF254A0BF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{B048DEE9-8803-408F-B32D-218BD90BDB06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSolaris", "..\nsolaris\NSolaris\NSolaris.csproj", "{C466FA91-1280-4BA8-8F84-D6755149B7DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -15,5 +19,14 @@ Global
 		{D4C31C6E-7110-4187-8A7E-BB8CF254A0BF}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{D4C31C6E-7110-4187-8A7E-BB8CF254A0BF}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{D4C31C6E-7110-4187-8A7E-BB8CF254A0BF}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C466FA91-1280-4BA8-8F84-D6755149B7DC} = {B048DEE9-8803-408F-B32D-218BD90BDB06}
 	EndGlobalSection
 EndGlobal
