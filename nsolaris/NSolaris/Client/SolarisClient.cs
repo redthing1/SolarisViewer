@@ -223,4 +223,27 @@ public class SolarisClient {
 
         return eventsResData;
     }
+
+    public async Task<GameInfoResponse?> FindGame(string gameQuery, bool includePast = true) {
+        var allMyGames = new List<GameOverviewResponse>();
+
+        var activeGames = await GetActiveGames();
+        allMyGames.AddRange(activeGames);
+        if (includePast) {
+            var pastGames = await GetPastGames();
+            allMyGames.AddRange(pastGames);
+        }
+
+        // FirstOrDefault because names may be reused
+        var matchedMyGame =
+            allMyGames.FirstOrDefault(x => x._id == gameQuery || x.settings.general.name == gameQuery);
+
+        if (matchedMyGame != null) return matchedMyGame;
+
+        // try to get game info directly
+        var gameInfo = await GetGameInfo(gameId: gameQuery);
+        if (gameInfo != null) return gameInfo;
+        
+        return null;
+    }
 }
