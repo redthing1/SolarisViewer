@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dr2fb32huc6g3"]
+
+[ext_resource type="Script" path="res://things/carrier/CarrierMarker.cs" id="1_pc36s"]
+[ext_resource type="Texture2D" uid="uid://b4y2ad77b0kka" path="res://assets/solaris/map-objects/128x128_carrier.svg" id="2_3h0f1"]
+
+[node name="carrier" type="Node2D"]
+script = ExtResource("1_pc36s")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_3h0f1")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -27.0
+offset_top = 48.0
+offset_right = 27.0
+offset_bottom = 74.0
+grow_horizontal = 2
+text = "Carrier"
