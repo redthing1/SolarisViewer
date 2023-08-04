@@ -14,10 +14,12 @@ public class SolarisClient {
     private readonly HttpClient _client;
     private readonly ILogger _log;
     private SolarisClientCache _cache = new();
+    private readonly string? _cacheDir;
 
     public UserInfo? User { get; private set; }
 
-    public SolarisClient(Logger log, string baseUrl) {
+    public SolarisClient(Logger log, string baseUrl, string? cacheDir = null) {
+        _cacheDir = cacheDir;
         BaseUrl = baseUrl;
         _log = log.For<SolarisClient>();
         _client = new HttpClient(
@@ -32,31 +34,35 @@ public class SolarisClient {
         };
     }
 
-    public void SaveCache(string cacheDir) {
-        Directory.CreateDirectory(cacheDir);
-        _log.Trace($"saving cache to {cacheDir}");
+    public bool SaveCache() {
+        if (_cacheDir == null) return false; // if no cache dir is set, don't save
+
+        Directory.CreateDirectory(_cacheDir);
+        _log.Debug($"saving cache to {_cacheDir}");
         foreach (var gameId in _cache.Games.Keys) {
-            _log.Trace($"  saving cache for game {gameId}");
+            _log.Debug($"  saving cache for game {gameId}");
             var gameCache = _cache.Games[gameId];
-            var gameCachePath = Path.Join(cacheDir, $"{gameId}.json");
+            var gameCachePath = Path.Join(_cacheDir, $"{gameId}.json");
             var jsonDump = JsonSerializer.Serialize(gameCache, GameModelHelpers.CreateJsonSerializerOptions());
             File.WriteAllText(gameCachePath, jsonDump);
         }
+
+        return true;
     }
 
-    public bool LoadCache(string cacheDir) {
-        if (!Directory.Exists(cacheDir)) {
-            _log.Trace($"no client cache found at {cacheDir}");
+    public bool LoadCache() {
+        if (!Directory.Exists(_cacheDir)) {
+            _log.Trace($"no client cache found at {_cacheDir}");
             return false;
         }
 
-        _log.Trace($"loading cache from {cacheDir}");
+        _log.Debug($"loading cache from {_cacheDir}");
         var loadedCache = new SolarisClientCache();
-        var gameCacheFiles = Directory.GetFiles(cacheDir, "*.json");
+        var gameCacheFiles = Directory.GetFiles(_cacheDir, "*.json");
         foreach (var gameCacheFile in gameCacheFiles) {
             var gameId = Path.GetFileNameWithoutExtension(gameCacheFile);
             var cacheFileSize = new FileInfo(gameCacheFile).Length;
-            _log.Trace($"  loading cache for game {gameId} ({cacheFileSize.Bytes()})");
+            _log.Debug($"  loading cache for game {gameId} ({cacheFileSize.Bytes()})");
             var jsonDump = File.ReadAllText(gameCacheFile);
             var gameCache =
                 JsonSerializer.Deserialize<SolarisClientCache.GameCache>(jsonDump,
@@ -81,6 +87,7 @@ public class SolarisClient {
         if (User == null) throw new ArgumentNullException(nameof(User));
 
         _log.Info($"logged in as {User.username} ({User._id})");
+        SaveCache();
 
         return true;
     }
@@ -95,6 +102,8 @@ public class SolarisClient {
         if (resData == null) throw new ArgumentNullException(nameof(resData));
 
         _log.Trace($"  got {resData.Count} active games");
+        SaveCache();
+
         return resData;
     }
 
@@ -108,6 +117,8 @@ public class SolarisClient {
         if (resData == null) throw new ArgumentNullException(nameof(resData));
 
         _log.Trace($"  got {resData.Count} past games");
+        SaveCache();
+
         return resData;
     }
 
@@ -121,6 +132,7 @@ public class SolarisClient {
         if (resData == null) return null;
 
         _log.Trace($"  succesfully parsed info for game {gameId}");
+        SaveCache();
 
         return resData;
     }
@@ -149,7 +161,8 @@ public class SolarisClient {
         // store in cache
         _cache.ForGame(gameId).SyncHistory[syncResData.state.tick] = syncResData;
 
-        _log.Trace($"  succesfully parsed sync data for game {gameId}");
+        _log.Trace($"  successfully parsed sync data for game {gameId}");
+        SaveCache();
 
         return syncResData;
     }
@@ -201,6 +214,7 @@ public class SolarisClient {
         _cache.ForGame(gameId).IntelTickHistory = ticksResData;
 
         _log.Trace($"  succesfully parsed intel data for game {gameId}");
+        SaveCache();
 
         return ticksResData;
     }
@@ -220,6 +234,7 @@ public class SolarisClient {
         _cache.ForGame(gameId).EventsHistory = eventsResData;
 
         _log.Trace($"  succesfully parsed events for game {gameId}");
+        SaveCache();
 
         return eventsResData;
     }
@@ -243,7 +258,7 @@ public class SolarisClient {
         // try to get game info directly
         var gameInfo = await GetGameInfo(gameId: gameQuery);
         if (gameInfo != null) return gameInfo;
-        
+
         return null;
     }
 }
