@@ -1,6 +1,7 @@
 namespace SolarisDIB.Cli.Util;
 
 public enum Verbosity : long {
+    Debug = 5,
     Trace = 4,
     Information = 3,
     Warning = 2,
@@ -12,6 +13,7 @@ public interface ILogger {
     Verbosity Verbosity { get; set; }
     Logger BaseLogger { get; }
 
+    void Debug(string log);
     void Trace(string log);
     void Info(string log);
     void Warn(string log);
@@ -36,6 +38,7 @@ public class LoggerFor<T> : ILogger {
         set => _logger.Verbosity = value;
     }
 
+    public void Debug(string log) => _logger.Debug(FormatWithContext(log));
     public void Trace(string log) => _logger.Trace(FormatWithContext(log));
     public void Info(string log) => _logger.Info(FormatWithContext(log));
     public void Warn(string log) => _logger.Warn(FormatWithContext(log));
@@ -64,6 +67,7 @@ public class Logger : ILogger {
         }
     }
 
+    public void Debug(string log) => WriteLine(log, Verbosity.Debug);
     public void Trace(string log) => WriteLine(log, Verbosity.Trace);
     public void Info(string log) => WriteLine(log, Verbosity.Information);
     public void Warn(string log) => WriteLine(log, Verbosity.Warning);
@@ -72,6 +76,7 @@ public class Logger : ILogger {
 
     private static string ShortVerbosity(Verbosity level) {
         switch (level) {
+            case Verbosity.Debug: return "dbug";
             case Verbosity.Trace: return "trce";
             case Verbosity.Information: return "info";
             case Verbosity.Warning: return "warn";
@@ -117,6 +122,7 @@ public class Logger : ILogger {
 
         private ConsoleColor ColorFor(Verbosity level) {
             switch (level) {
+                case Verbosity.Debug: return ConsoleColor.DarkGray;
                 case Verbosity.Trace: return ConsoleColor.Gray;
                 case Verbosity.Information: return ConsoleColor.Green;
                 case Verbosity.Warning: return ConsoleColor.Yellow;
