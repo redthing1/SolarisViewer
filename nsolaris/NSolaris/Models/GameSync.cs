@@ -130,7 +130,20 @@ public record TechnologyLevels(
     ResearchItemState banking,
     ResearchItemState manufacturing,
     ResearchItemState specialists
-);
+) {
+    public EffectiveTechnologyLevels ToEffectiveLevels() {
+        return new EffectiveTechnologyLevels(
+            scanning: scanning.level,
+            hyperspace: hyperspace.level,
+            terraforming: terraforming.level,
+            experimentation: experimentation.level,
+            weapons: weapons.level,
+            banking: banking.level,
+            manufacturing: manufacturing.level,
+            specialists: specialists.level
+        );
+    }
+}
 
 public record ExpenseMultipliers(
     int standard,
@@ -420,7 +433,7 @@ public record Specialist(
 public record PlayerGuild(
     string _id,
     string name,
-    string tag 
+    string tag
 );
 
 public record PlayerStats(
@@ -550,6 +563,8 @@ public record GameSyncResponse(
     List<string> spectators
 ) {
     public string Name => settings.general.name;
+    public long CurrentTick => state.tick;
+
     public Player? GetPlayer(string playerId) => galaxy.players.SingleOrDefault(p => p._id == playerId);
     public Player? GetPlayerByUserId(string userId) => galaxy.players.SingleOrDefault(p => p.userId == userId);
     public Star? GetStar(string starId) => galaxy.stars.SingleOrDefault(s => s._id == starId);

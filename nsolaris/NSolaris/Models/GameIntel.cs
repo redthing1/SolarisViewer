@@ -48,6 +48,7 @@ public record GameIntelTick(
     int tick,
     List<PlayerIntelTick> players
 ) {
+    public PlayerIntelTick? GetPlayerIntel(Player player) => GetPlayerIntel(player._id);
     public PlayerIntelTick? GetPlayerIntel(string playerId) {
         return players.SingleOrDefault(x => x.playerId == playerId);
     }
